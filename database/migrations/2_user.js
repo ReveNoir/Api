@@ -13,6 +13,12 @@ class UserSchema extends Schema {
 
       table.integer('birth')
       table.timestamps()
+
+      table.integer('rank').notNullable().unsigned()
+
+      table.string('account_status', 255)
+
+      table.foreign('rank').references('id').inTable('ranks')
     })
   }
 

@@ -10,11 +10,9 @@ class CharactersSchema extends Schema {
       table.string('path', 255).notNullable().unique()
       table.string('data', 1000).notNullable()
 
-      table.integer('application_id').unsigned().notNullable()
+      table.integer('application_id').unsigned().notNullable().references('id').inTable('application')
 
       table.timestamps()
-
-      table.foreign('application_id').reference('id').inTable('application')
     })
   }
 

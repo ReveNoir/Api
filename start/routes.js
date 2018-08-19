@@ -5,5 +5,6 @@ const Route = use('Route')
 const link = 'api/v1/blackdream'
 
 Route.group(() => {
-
-}).prefix(link + '/auth').formats(['json']).middleware(['url'])
+  Route.post('/register', 'UserController.register')
+  Route.get('/verify/:token', 'UserController.verifyEmail')
+}).prefix(link + '/auth').formats(['json'])
