@@ -3,7 +3,23 @@
 const Model = use('Model')
 const Hash = use('Hash')
 
+const Ranks = use('App/Controllers/Http/RankController')
+const uuid = use('uuid/v4')
+
 class User extends Model {
+
+  static get hidden () {
+    return ['password']
+  }
+
+  static get primaryKey () {
+    return 'uuid'
+  }
+
+  static get incrementing () {
+    return false
+  }
+
   static boot () {
     super.boot()
 
@@ -13,7 +29,9 @@ class User extends Model {
      */
     this.addHook('beforeSave', async (userInstance) => {
       if (userInstance.dirty.password) {
+        userInstance.uuid = uuid()
         userInstance.password = await Hash.make(userInstance.password)
+        userInstance.rank = (await Ranks.default()).id
       }
     })
   }
