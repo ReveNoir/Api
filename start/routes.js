@@ -2,9 +2,17 @@
 
 const Route = use('Route')
 
-const link = 'api/v1/blackdream'
+const link = 'api/blackdream/v1'
 
 Route.group(() => {
-  Route.post('/register', 'UserController.register')
   Route.get('/verify/:token', 'UserController.verifyEmail')
-}).prefix(link + '/auth').formats(['json'])
+
+  Route.post('/register', 'UserController.register')
+  Route.post('/login', 'UserController.login')
+  Route.post('/refresh/:token', 'UserController.refreshToken')
+  Route.post('/me', 'UserController.user')
+}).prefix(`${ link }/auth`).formats(['json'])
+
+Route.group(() => {
+  Route.post('publish', 'ApplicationController.publish')
+}).prefix(`${ link }/users`).formats(['json']).middleware(['auth'])
