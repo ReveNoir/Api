@@ -8,6 +8,10 @@ const uuid = use('uuid/v4')
 
 class User extends Model {
 
+  applications () {
+    return this.hasMany('App/Models/Application')
+  }
+
   static get hidden () {
     return ['password']
   }

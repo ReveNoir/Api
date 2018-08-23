@@ -4,7 +4,7 @@ const Schema = use('Schema')
 
 class ApplicationSchema extends Schema {
   up () {
-    this.create('application', (table) => {
+    this.create('applications', (table) => {
       table.increments('id')
 
       table.string('data', 1000).notNullable()
@@ -16,7 +16,7 @@ class ApplicationSchema extends Schema {
   }
 
   down () {
-    this.drop('application')
+    this.drop('applications')
   }
 }
 

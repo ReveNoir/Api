@@ -7,10 +7,10 @@ class CharactersSchema extends Schema {
     this.create('characters', (table) => {
       table.increments('id')
 
-      table.string('path', 255).notNullable().unique()
+      table.string('path', 255).unique()
       table.string('data', 1000).notNullable()
 
-      table.integer('application_id').unsigned().notNullable().references('id').inTable('application')
+      table.integer('application_id').unsigned().notNullable().references('id').inTable('applications')
 
       table.timestamps()
     })

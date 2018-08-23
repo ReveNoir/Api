@@ -3,22 +3,29 @@
 const Rank = use('App/Models/Rank')
 const Database = use('Database')
 
+const Application = use('App/Models/Application')
+const Characters = use('App/Models/Characters')
+
 class ApplicationController {
 
-  async publish ({ request, response, auth }) {
-    const all = request.only([
-      'mcname', 'birth', 'self', 'activity', 'mcplaying', 'friendly'
+  async publish ({ request, response }) {
+    const infos = request.only(['expectations', 'knowledge', 'involvement', 'rules', 'mcname',
+      'self', 'activity', 'mcplaying', 'friendly'
     ])
 
-    const pj = request.only([
-      'name', 'firstname', 'breeds', 'type', 'years', 'description',
-      'provenance', 'story', 'metier', 'object'
-    ])
+    const application = new Application()
+    application.data = JSON.stringify(infos)
+    application.user_id = request.input('uuid')
 
-    const infos = request.only(['expectations', 'knowledge', 'involvement', 'rules'])
+    await application.save()
 
-    console.log(all, pj, auth.user.uuid)
+    return response.status(200).json({ status: 'application created', id: application.id })
+  }
 
+  async get ({ response, auth }) {
+    const user = await auth.getUser()
+    const application = await user.applications()
+    response.status(200).json({ application })
   }
 
 }
