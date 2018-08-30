@@ -6,10 +6,13 @@ const Hash = use('Hash')
 const Ranks = use('App/Controllers/Http/RankController')
 const uuid = use('uuid/v4')
 
+const Profil = use('App/Models/Profil')
+const Database = use('Database')
+
 class User extends Model {
 
-  applications () {
-    return this.hasMany('App/Models/Application')
+  profil () {
+    return this.hasMany('App/Models/Profil')
   }
 
   static get hidden () {
@@ -38,6 +41,13 @@ class User extends Model {
         userInstance.rank = (await Ranks.default()).id
       }
     })
+
+    this.addHook('afterCreate', async user => {
+      const p = new Profil()
+      p.user_id = user.uuid
+      p.save()
+    })
+
   }
 
   /**
@@ -53,6 +63,8 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+
+
 }
 
 module.exports = User

@@ -1,27 +1,25 @@
 'use strict'
 
 const Route = use('Route')
-
 const link = 'api/blackdream/v1'
 
 Route.group(() => {
   Route.get('verify/:token', 'UserController.verifyEmail')
+
   Route.post('register', 'UserController.register')
   Route.post('login', 'UserController.login')
-  Route.post('refresh', 'UserController.refreshToken') //Token "Refresh"
+  Route.post('refresh', 'UserController.refreshToken')
+  Route.post('readRules', 'UserController.readRules')
+  Route.post('updateMinecraft', 'UserController.updateMinecraft')
 }).prefix(`${link}/auth/`).formats(['json'])
 
 Route.group(() => {
-  Route.post('create', 'ApplicationController.publish') //Token Authorization
-  Route.get('get', 'ApplicationController.get')
-}).prefix(`${link}/application/`).formats(['json']).middleware(['auth'])
+  Route.get('get/:uuid', 'ProfilController.getProfil')
+  Route.post('upload/:type', 'ProfilController.upload').middleware(['auth'])
+}).prefix(`${link}/profil/`).formats(['json'])
 
 Route.group(() => {
-  Route.post('create', 'CharactersController.create') //Request "application_id", "pj"
-  Route.get('get', 'CharactersController.get')
-}).prefix(`${link}/characters/`).formats(['json']).middleware(['auth'])
-
-Route.group(() => {
-  Route.post('user', 'UserController.setBirth') //Request "birth", Token Authorization
-  Route.get('me', 'UserController.user') //Token Authorization
-}).prefix(`${link}/users/`).formats(['json']).middleware(['auth'])
+  Route.post('publish', 'ApplicationController.publish').middleware(['auth'])
+  Route.get('get/:uuid', 'Applicationcontroller.get')
+  Route.post('update', 'ApplicationController.update').middleware(['auth'])
+}).prefix(`${link}/application/`).formats(['json'])

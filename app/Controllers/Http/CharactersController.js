@@ -1,11 +1,14 @@
 'use strict'
 
 const Characters = use('App/Models/Characters')
+const Application = use('App/Models/Application')
+const Database = use('Database')
 
 class CharactersController {
 
   async create ({ request, response }) {
     const characters = new Characters()
+    
     const pj = request.only([
       'name', 'firstname', 'breeds', 'type', 'years', 'description',
       'provenance', 'story', 'metier', 'object'
@@ -19,9 +22,13 @@ class CharactersController {
   }
 
   async get ({ auth, response }) {
+    let characters = []
     const user = await auth.getUser()
-    const applications = (await user.applications().fetch()).rows
-    const characters = await Promise.all(applications.map((app) => app.characters()));
+
+    for(const application of (await user.applications().fetch()).rows){
+      characters = ((await Characters.query().with('application').where('application_id', application.id).fetch()).rows)
+    }
+
     return response.status(200).json({ characters })
   }
 

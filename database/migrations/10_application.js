@@ -8,10 +8,10 @@ class ApplicationSchema extends Schema {
       table.increments('id')
 
       table.string('data', 1000).notNullable()
-      table.string('user_id', 255).notNullable()
+      table.integer('profil_id').notNullable()
       table.timestamps()
 
-      table.foreign('user_id').references('uuid').inTable('users')
+      table.foreign('profil_id').references('id').inTable('profils')
     })
   }
 

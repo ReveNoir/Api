@@ -12,6 +12,10 @@ class Application extends Model {
     return this.hasMany('App/Models/Characters')
   }
 
+  profil () {
+    return this.belongsTo('App/Models/Profil')
+  }
+
 }
 
 module.exports = Application

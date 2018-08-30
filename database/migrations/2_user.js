@@ -15,8 +15,10 @@ class UserSchema extends Schema {
       table.timestamps()
 
       table.integer('rank').notNullable().unsigned()
-
       table.string('account_status', 255)
+      table.string('minecraft_account', 255).unique()
+
+      table.string('rules')
 
       table.foreign('rank').references('id').inTable('ranks')
     })

@@ -1,7 +1,6 @@
 'use strict'
 
 const Persona = use('Persona')
-const Encryption = use('Encryption')
 
 class UserController {
 
@@ -23,7 +22,7 @@ class UserController {
   }
 
   async register ({ request, response, auth }) {
-    const payload = request.only(['username', 'email', 'password', 'password_confirmation'])
+    const payload = request.only(['username', 'email', 'password', 'password_confirmation', 'birth', 'mc_account'])
     const user = await Persona.register(payload)
     const tokens = await auth.withRefreshToken().generate(user, true)
     return response.status(200).json({ tokens })
@@ -36,23 +35,13 @@ class UserController {
     return response.status(200).json({ tokens })
   }
 
-  async user ({ response, auth }) {
-    try {
-      const user = await auth.getUser()
-      response.status(200).json((user.account_status ? { user } : { status: 'This account must me verified' }))
-    } catch (error) {
-      response.status(401).json({ status: 'Missing or invalid jwt token' })
-    }
-  }
-
   async disconnect ({ response, auth }) {
     await auth.logout()
     response.status(200).json({ status: 'disconnected' })
   }
 
-
   async verifyEmail ({ params, response }) {
-    await Persona.verifyEmail(Encryption.decrypt(params.token))
+    await Persona.verifyEmail(use('Encryption').base64Decode(params.token))
     return response.status(200).json({ status: 'verified' })
   }
 
@@ -62,21 +51,18 @@ class UserController {
     return response.status(200).json({ tokens })
   }
 
-  async test ({ auth }) {
+  async readRules ({ auth, response }) {
     const user = await auth.getUser()
-    const apps = (await user.applications().fetch()).rows[0]
-    const chars = (await apps.characters())[0].data
-
-    const t = JSON.parse(chars)
-
-    console.log(t.name)
+    user.rules = "true"
+    await user.save()
+    response.status(200).json({ status: 'User updated.' })
   }
 
-  async setBirth ({ request, response, auth }) {
-    const user = auth.user
-    user.birth = request.only(['birth']).birth
+  async updateMinecraft ({ auth, response }) {
+    const user = await auth.getUser()
+    user.minecraft_account = response.input('minecraft_account')
     await user.save()
-    return response.status(200).json({ status: 'user edited', uuid: user.uuid })
+    response.status(200).json({ status: 'User updated.' })
   }
 
 }
